@@ -41,9 +41,8 @@ hPacketFieldType = "double" if hPacketFieldType == "number" else hPacketFieldTyp
 # Same name of script
 outputName = "mean"
 
-# HDFS path
-#path_file = f"hdfs://localhost:8020/data/HPacket/{hPacketId}/20*" 
-path_file = "C:/Users/alessio.serra/Desktop/ACSoftware/HyperIoT/test_caricamento_su_hyperIot/train.avro"
+# HDFS path (da correggere con url preso come parametro)
+path_file = f"hdfs://hadoop-nn-0.hadoop-nn-service.hyperiot-test.svc.cluster.local:8020/data/HPacket/{hPacketId}/20*"
 
 # TO CORRECT
 df_list =[]
@@ -73,7 +72,11 @@ output = value.select(coalesce(value.member0.cast("string"), value.member1.cast(
                                value.member4.cast("string"), value.member5.cast("string"),
                                value.member6.cast("string")).alias('value')).select(col("value").cast("double")).select(mean(col("value")))
 
+print("###############################################################")
+print("######################OUTPUT:##################################")
+print(output)
+print("###############################################################")
 
 # Close all connections
-connection.close()
+#connection.close() HBASE
 spark.stop()
