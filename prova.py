@@ -6,10 +6,11 @@ from pyspark.sql.functions import *
 from functools import reduce
 
 # Libreria da provare
-from thrift.transport import TSocket
-from thrift.transport import TTransport
+import sys
+import os
+from thrift.transport import TSocket, TTransport
 from thrift.protocol import TBinaryProtocol
-from hbase import *
+from hbase.ttypes import *
 
 #spark-submit --packages org.apache.spark:spark-avro_2.13:3.4.1 mean.py 17 240297 "ProvaAlgoritmo" "{'hPacketId': 117,'hPacketFieldId':118, 'hPacketFieldType':'number'}"
 
@@ -91,18 +92,23 @@ transport = TTransport.TBufferedTransport(transport)
 protocol = TBinaryProtocol.TBinaryProtocol(transport)
 
 # Crea un client HBase
-client = HBase.Client(protocol)
+client = Hbase.Client(protocol)
 
 # Apri la connessione al server
 transport.open()
 
 # Esegui le operazioni su HBase qui
-# Ad esempio, puoi ottenere una riga da una tabella
 table_name = "example_table"
-row_key = "row1"
-row = client.get(table_name, row_key, None)
+row_key = b"row1"
+column_family = "cf"
+column_qualifier = "col1"
 
-# Esegui operazioni aggiuntive e manipola i dati come desideri
+# Ottenere una riga
+get = Get(row=row_key, column=column_family + ":" + column_qualifier)
+result = client.get(table_name, get)
+print(result)
+
+# Esegui altre operazioni e manipola i dati come necessario
 
 # Chiudi la connessione al server
 transport.close()
