@@ -4,11 +4,12 @@ from pyspark.sql import SparkSession
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import *
 from functools import reduce
+
 # Libreria da provare
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
-from hbase.client import HBase
+from hbase import *
 
 #spark-submit --packages org.apache.spark:spark-avro_2.13:3.4.1 mean.py 17 240297 "ProvaAlgoritmo" "{'hPacketId': 117,'hPacketFieldId':118, 'hPacketFieldType':'number'}"
 
@@ -90,7 +91,7 @@ transport = TTransport.TBufferedTransport(transport)
 protocol = TBinaryProtocol.TBinaryProtocol(transport)
 
 # Crea un client HBase
-client = Hbase.Client(protocol)
+client = HBase.Client(protocol)
 
 # Apri la connessione al server
 transport.open()
