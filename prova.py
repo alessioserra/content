@@ -4,7 +4,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import *
 from functools import reduce
-// Libreria da provare
+# Libreria da provare
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
