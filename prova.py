@@ -1,11 +1,14 @@
 import sys
 import json
-#import happybase
-import hbase
 from pyspark.sql import SparkSession
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import *
 from functools import reduce
+// Libreria da provare
+from thrift.transport import TSocket
+from thrift.transport import TTransport
+from thrift.protocol import TBinaryProtocol
+from hbase import Hbase
 
 #spark-submit --packages org.apache.spark:spark-avro_2.13:3.4.1 mean.py 17 240297 "ProvaAlgoritmo" "{'hPacketId': 117,'hPacketFieldId':118, 'hPacketFieldType':'number'}"
 
@@ -76,18 +79,32 @@ output = value.select(coalesce(value.member0.cast("string"), value.member1.cast(
                                value.member6.cast("string")).alias('value')).select(col("value").cast("double")).select(mean(col("value")))
 
 # HBASE PROVA ####################################################################
-zk = 'localhost:9090'
 
-with hbase.ConnectionPool(zk).connect() as conn:
-    table = conn['"algorithm" + "_" + algorithmId']
-    table.put(hbase.Row(
-        '0001', {
-            'cf:name': b'Lily',
-            'cf:age': b'20'
-        }
-    ))
-    
-exit()
+# Imposta l'hostname e la porta del server HBase
+host = "localhost"
+port = 9090
+
+# Crea una connessione al server HBase
+transport = TSocket.TSocket(host, port)
+transport = TTransport.TBufferedTransport(transport)
+protocol = TBinaryProtocol.TBinaryProtocol(transport)
+
+# Crea un client HBase
+client = Hbase.Client(protocol)
+
+# Apri la connessione al server
+transport.open()
+
+# Esegui le operazioni su HBase qui
+# Ad esempio, puoi ottenere una riga da una tabella
+table_name = "example_table"
+row_key = "row1"
+row = client.get(table_name, row_key, None)
+
+# Esegui operazioni aggiuntive e manipola i dati come desideri
+
+# Chiudi la connessione al server
+transport.close()
 #################################################################################
 
 # Write in Hbase
