@@ -1,6 +1,7 @@
 import sys
 import json
-import happybase
+#import happybase
+import hbase
 from pyspark.sql import SparkSession
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import *
@@ -74,22 +75,37 @@ output = value.select(coalesce(value.member0.cast("string"), value.member1.cast(
                                value.member4.cast("string"), value.member5.cast("string"),
                                value.member6.cast("string")).alias('value')).select(col("value").cast("double")).select(mean(col("value")))
 
+# HBASE PROVA ####################################################################
+zk = 'localhost:9090'
+
+with hbase.ConnectionPool(zk).connect() as conn:
+    table = conn['"algorithm" + "_" + algorithmId']
+    table.put(hbase.Row(
+        '0001', {
+            'cf:name': b'Lily',
+            'cf:age': b'20'
+        }
+    ))
+    
+exit()
+#################################################################################
 
 # Write in Hbase
-connection = happybase.Connection(host="localhost", port=9090, protocol="compact")
-connection.open()
-table_name = "algorithm" + "_" + algorithmId
-connection.create_table(table_name, ({'value': dict()}))
-HbaseTable = connection.table(table_name)
+#connection = happybase.Connection(host="localhost", port=9090, protocol="compact")
+#connection.open()
+#table_name = "algorithm" + "_" + algorithmId
+#connection.create_table(table_name, ({'value': dict()}))
+#HbaseTable = connection.table(table_name)
 
-for row in output.collect():
-    keyValue = projectId + "_" + hProjectAlgorithmName + "_" + ''
-    columnFamily = 'value'
-    max = str(row[0])
-    column = outputName
+#for row in output.collect():
+#    keyValue = projectId + "_" + hProjectAlgorithmName + "_" + ''
+#    columnFamily = 'value'
+#    max = str(row[0])
+#    column = outputName
 
-    HbaseTable.put(keyValue.encode("utf-8"), {columnFamily.encode("utf-8") +":".encode("utf-8")+ column.encode("utf-8"): max.encode("utf-8")})
+#    HbaseTable.put(keyValue.encode("utf-8"), {columnFamily.encode("utf-8") +":".encode("utf-8")+ column.encode("utf-8"): max.encode("utf-8")})
 
 # Close all connections
-connection.close()
+#connection.close()
+
 spark.stop()
