@@ -96,7 +96,4 @@ for row in output.collect():
 
 # Close all connections
 connection.close()
-
-# Close all connections
-#connection.close() HBASE
 spark.stop()
