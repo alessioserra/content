@@ -73,17 +73,13 @@ output = value.select(coalesce(value.member0.cast("string"), value.member1.cast(
                                value.member4.cast("string"), value.member5.cast("string"),
                                value.member6.cast("string")).alias('value')).select(col("value").cast("double")).select(mean(col("value")))
 
-print("###############################################################")
-print("######################OUTPUT:##################################")
-print(output)
-print("###############################################################")
-
 # Write in Hbase
-connection = happybase.Connection(host="hbase-hmaster-0.hbase-hmaster-service.hyperiot-test.svc.cluster.local", port=9090, protocol="binary")
+connection = happybase.Connection(host="hbase-hmaster-0.hbase-hmaster-service.hyperiot-test.svc.cluster.local", port=9090, protocol="compact")
 #connection = happybase.Connection(host="localhost", port=9090, protocol="compact")
+
 connection.open()
-table_name = "algorithm" + "_" + algorithmId + "PROVAFINALE!"
-connection.create_table(table_name, {'value': dict()})
+table_name = "algorithm" + "_" + algorithmId
+connection.create_table(table_name, ({'value': dict()}))
 HbaseTable = connection.table(table_name)
 
 for row in output.collect():
