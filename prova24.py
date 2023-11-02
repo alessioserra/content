@@ -74,7 +74,7 @@ output = value.select(coalesce(value.member0.cast("string"), value.member1.cast(
                                value.member6.cast("string")).alias('value')).select(col("value").cast("double")).select(mean(col("value")))
 
 # Write in Hbase
-connection = happybase.Connection(host="hbase-hmaster-0.hbase-hmaster-service.hyperiot-test.svc.cluster.local", port=9090, protocol="compact")
+connection = happybase.Connection(host="hbase-hmaster-0.hbase-hmaster-service.hyperiot-test.svc.cluster.local", port=16010, protocol="compact")
 #connection = happybase.Connection(host="localhost", port=9090, protocol="compact")
 
 connection.open()
