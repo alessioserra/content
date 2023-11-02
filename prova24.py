@@ -77,6 +77,24 @@ print("######################OUTPUT:##################################")
 print(output)
 print("###############################################################")
 
+# Write in Hbase
+connection = happybase.Connection(host="localhost", port=9090, protocol="compact")
+connection.open()
+table_name = "algorithm" + "_" + algorithmId
+connection.create_table(table_name, ({'value': dict()}))
+HbaseTable = connection.table(table_name)
+
+for row in output.collect():
+    keyValue = projectId + "_" + hProjectAlgorithmName + "_" + ''
+    columnFamily = 'value'
+    max = str(row[0])
+    column = outputName
+
+    HbaseTable.put(keyValue.encode("utf-8"), {columnFamily.encode("utf-8") +":".encode("utf-8")+ column.encode("utf-8"): max.encode("utf-8")})
+
+# Close all connections
+connection.close()
+
 # Close all connections
 #connection.close() HBASE
 spark.stop()
