@@ -82,7 +82,7 @@ print("###############################################################")
 connection = happybase.Connection(host="hbase-hmaster-0.hbase-hmaster-service.hyperiot-test.svc.cluster.local", port=9090)
 #connection = happybase.Connection(host="localhost", port=9090, protocol="compact")
 connection.open()
-table_name = "algorithm" + "_" + algorithmId
+table_name = "algorithm" + "_" + algorithmId + "___PROVA___FINALE!"
 connection.create_table(table_name, ({'value': dict()}))
 HbaseTable = connection.table(table_name)
 
