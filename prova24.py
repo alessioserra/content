@@ -83,7 +83,7 @@ connection = happybase.Connection(host="hbase-hmaster-0.hbase-hmaster-service.hy
 #connection = happybase.Connection(host="localhost", port=9090, protocol="compact")
 connection.open()
 table_name = "algorithm" + "_" + algorithmId + "___PROVA___FINALE!"
-connection.create_table(table_name, ({'value': dict()}))
+connection.create_table(table_name, {'value': dict()})
 HbaseTable = connection.table(table_name)
 
 for row in output.collect():
