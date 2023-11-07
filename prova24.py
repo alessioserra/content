@@ -8,6 +8,8 @@ import happybase
 
 #spark-submit --packages org.apache.spark:spark-avro_2.13:3.4.1 mean.py 17 240297 "ProvaAlgoritmo" "{'hPacketId': 117,'hPacketFieldId':118, 'hPacketFieldType':'number'}"
 
+print(sys.argv)
+
 # Creazione Sessione Spark
 spark = SparkSession.builder\
     .appName('HYOT_Neural_Network_train') \
