@@ -6,11 +6,6 @@ from pyspark.sql.functions import *
 from functools import reduce
 import happybase
 
-#spark-submit --packages org.apache.spark:spark-avro_2.13:3.4.1 mean.py 17 240297 "ProvaAlgoritmo" "{'hPacketId': 117,'hPacketFieldId':118, 'hPacketFieldType':'number'}"
-
-# DA RIMUOVERE
-print(sys.argv)
-
 # Creazione Sessione Spark
 spark = SparkSession.builder\
     .appName('HYOT_Neural_Network_train') \
@@ -27,7 +22,7 @@ algorithmId = sys.argv[2]
 # HProjectAlgorithm name
 hProjectAlgorithmName = sys.argv[3]
 
-# JobConfig (hbase master port, url, etc...)
+# Hadoop & HBase job config
 configs = sys.argv[4].replace('\\"', '"')
 oldJobConfig = json.loads(configs)
 
@@ -39,37 +34,28 @@ hbaseURL = hbaseRootdir.replace("/hbase", "") + hdfsWriteDir
 # HBASE
 hbaseMaster = oldJobConfig['hbaseMaster'].replace(":16000", "")
 
-# INPUT CONFIG
+# INPUT/OUTPUT JOB CONFIG
 inputs = sys.argv[5].replace('\\"', '"')
 jobConfig = json.loads(inputs)
 
-# Retrieve information from updated JSON
-# Get HPacket ID
+# Retrieve information from argument JSONs
 hPacketId  = jobConfig['input'][0]['packetId']
-
-# Get first HPacketField ID
 hPacketFieldId = jobConfig['input'][0]['mappedInputList'][0]['packetFieldId']
-
-# Get first HPacketField type
 hPacketFieldType = jobConfig['input'][0]['mappedInputList'][0]['algorithmInput']['fieldType']
 hPacketFieldType = "double" if hPacketFieldType == "NUMBER" else hPacketFieldType
 
 # Same name of script
 outputName = hProjectAlgorithmName
 
-# HDFS path (da correggere con url preso come parametro)
+# HDFS path
 path_file = f"{hbaseURL}{hPacketId}/20*"
 
-# TO CORRECT
+# Create merged dataset
 df_list =[]
 temp = spark.read.format("avro").load(path_file)
 temp = temp.select(explode(map_values(temp.fields)).alias("hPacketField")).filter(col("hPacketField.id") == hPacketFieldId)
 df_list.append(temp)
-
-# Create merged dataframe
 df_complete = reduce(DataFrame.union, df_list)
-
-# Shuffle dataframe
 df_complete = df_complete.orderBy(rand())
 
 # Explode column FIELDS
@@ -82,13 +68,13 @@ value = df_complete.select(
     ("hPacketField.value.member5"),
     ("hPacketField.value.member6")) 
 
-# Mean
+# MEAN (CHANGE STATISTIC TYPE HERE)
 output = value.select(coalesce(value.member0.cast("string"), value.member1.cast("string"),
                                value.member2.cast("string"), value.member3.cast("string"),
                                value.member4.cast("string"), value.member5.cast("string"),
                                value.member6.cast("string")).alias('value')).select(col("value").cast("double")).select(mean(col("value")))
 
-# Write in Hbase
+# Write into HBase
 connection = happybase.Connection(host=hbaseMaster, port=9090, protocol="binary")
 
 connection.open()
@@ -99,10 +85,10 @@ HbaseTable = connection.table(table_name)
 for row in output.collect():
     keyValue = projectId + "_" + hProjectAlgorithmName + "_" + ''
     columnFamily = 'value'
-    max = str(row[0])
+    val = str(row[0])
     column = outputName
 
-    HbaseTable.put(keyValue.encode("utf-8"), {columnFamily.encode("utf-8") +":".encode("utf-8")+ column.encode("utf-8"): max.encode("utf-8")})
+    HbaseTable.put(keyValue.encode("utf-8"), {columnFamily.encode("utf-8") +":".encode("utf-8")+ column.encode("utf-8"): val.encode("utf-8")})
 
 # Close all connections
 connection.close()
