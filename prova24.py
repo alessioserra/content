@@ -27,9 +27,13 @@ algorithmId = sys.argv[2]
 # HProjectAlgorithm name
 hProjectAlgorithmName = sys.argv[3]
 
-# JobConfig
-config_job_replaced = sys.argv[4].replace('\\"', '"')
-jobConfig = json.loads(config_job_replaced)
+# JobConfig (hbase master port, url, etc...)
+configs = sys.argv[4].replace('\\"', '"')
+oldJobConfig = json.loads(configs)
+
+# INPUT CONFIG
+inputs = sys.argv[5].replace('\\"', '"')
+jobConfig = json.loads(inputs)
 
 # Retrieve information from updated JSON
 # Get HPacket ID
