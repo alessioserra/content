@@ -31,6 +31,14 @@ hProjectAlgorithmName = sys.argv[3]
 configs = sys.argv[4].replace('\\"', '"')
 oldJobConfig = json.loads(configs)
 
+# HADOOP
+hbaseRootdir = oldJobConfig['hbaseRootdir']
+hdfsWriteDir = oldJobConfig['hdfsWriteDir']
+hbaseURL = hbaseRootdir.replace("/hbase", "") + hdfsWriteDir
+
+# HBASE
+hbaseMaster = oldJobConfig['hbaseMaster'].replace(":16000", "")
+
 # INPUT CONFIG
 inputs = sys.argv[5].replace('\\"', '"')
 jobConfig = json.loads(inputs)
@@ -50,7 +58,7 @@ hPacketFieldType = "double" if hPacketFieldType == "NUMBER" else hPacketFieldTyp
 outputName = hProjectAlgorithmName
 
 # HDFS path (da correggere con url preso come parametro)
-path_file = f"hdfs://hadoop-nn-0.hadoop-nn-service.hyperiot-test.svc.cluster.local:8020/data/HPacket/{hPacketId}/20*"
+path_file = f"{hbaseURL}{hPacketId}/20*"
 
 # TO CORRECT
 df_list =[]
@@ -81,11 +89,10 @@ output = value.select(coalesce(value.member0.cast("string"), value.member1.cast(
                                value.member6.cast("string")).alias('value')).select(col("value").cast("double")).select(mean(col("value")))
 
 # Write in Hbase
-connection = happybase.Connection(host="hbase-hmaster-0.hbase-hmaster-service.hyperiot-test.svc.cluster.local", port=9090, protocol="binary")
-#connection = happybase.Connection(host="localhost", port=9090, protocol="compact")
+connection = happybase.Connection(host=hbaseMaster, port=9090, protocol="binary")
 
 connection.open()
-table_name = "algorithm" + "_" + algorithmId + "PROVA"
+table_name = "algorithm" + "_" + algorithmId + "_"
 connection.create_table(table_name, {'value': dict()})
 HbaseTable = connection.table(table_name)
 
