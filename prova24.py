@@ -8,6 +8,7 @@ import happybase
 
 #spark-submit --packages org.apache.spark:spark-avro_2.13:3.4.1 mean.py 17 240297 "ProvaAlgoritmo" "{'hPacketId': 117,'hPacketFieldId':118, 'hPacketFieldType':'number'}"
 
+# DA RIMUOVERE
 print(sys.argv)
 
 # Creazione Sessione Spark
@@ -27,7 +28,7 @@ algorithmId = sys.argv[2]
 hProjectAlgorithmName = sys.argv[3]
 
 # JobConfig
-config_job_replaced = sys.argv[4].replace("'", "\"")  
+config_job_replaced = sys.argv[4].replace('\\"', '"')
 jobConfig = json.loads(config_job_replaced)
 
 # Retrieve information from updated JSON
