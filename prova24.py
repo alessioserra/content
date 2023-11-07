@@ -79,7 +79,12 @@ connection = happybase.Connection(host=hbaseMaster, port=9090, protocol="binary"
 
 connection.open()
 table_name = "algorithm" + "_" + algorithmId + "_"
-connection.create_table(table_name, {'value': dict()})
+
+try:
+    connection.create_table(table_name, {'value': dict()})
+except:
+    print("TABLE ALREADY EXISTS!")
+    
 HbaseTable = connection.table(table_name)
 
 for row in output.collect():
