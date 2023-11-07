@@ -43,7 +43,7 @@ hPacketId  = jobConfig['input'][0]['packetId']
 hPacketFieldId = jobConfig['input'][0]['mappedInputList'][0]['packetFieldId']
 
 # Get first HPacketField type
-hPacketFieldType = jobConfig['input'][0]['mappedInputList'][0]['fieldType']
+hPacketFieldType = jobConfig['input'][0]['mappedInputList'][0]['algorithmInput']['fieldType']
 hPacketFieldType = "double" if hPacketFieldType == "NUMBER" else hPacketFieldType
 
 # Same name of script
