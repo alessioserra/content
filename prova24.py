@@ -37,17 +37,17 @@ jobConfig = json.loads(inputs)
 
 # Retrieve information from updated JSON
 # Get HPacket ID
-hPacketId  = jobConfig['input']['packetId']
+hPacketId  = jobConfig['input'][0]['packetId']
 
 # Get first HPacketField ID
-hPacketFieldId = jobConfig['input']['mappedInputList']['packetFieldId']
+hPacketFieldId = jobConfig['input'][0]['mappedInputList']['packetFieldId']
 
 # Get first HPacketField type
-hPacketFieldType = jobConfig['input']['mappedInputList']['fieldType']
+hPacketFieldType = jobConfig['input'][0]['mappedInputList']['fieldType']
 hPacketFieldType = "double" if hPacketFieldType == "NUMBER" else hPacketFieldType
 
 # Same name of script
-outputName = "mean"
+outputName = hProjectAlgorithmName
 
 # HDFS path (da correggere con url preso come parametro)
 path_file = f"hdfs://hadoop-nn-0.hadoop-nn-service.hyperiot-test.svc.cluster.local:8020/data/HPacket/{hPacketId}/20*"
