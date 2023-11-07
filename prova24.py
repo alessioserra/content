@@ -40,10 +40,10 @@ jobConfig = json.loads(inputs)
 hPacketId  = jobConfig['input'][0]['packetId']
 
 # Get first HPacketField ID
-hPacketFieldId = jobConfig['input'][0]['mappedInputList']['packetFieldId']
+hPacketFieldId = jobConfig['input'][0]['mappedInputList'][0]['packetFieldId']
 
 # Get first HPacketField type
-hPacketFieldType = jobConfig['input'][0]['mappedInputList']['fieldType']
+hPacketFieldType = jobConfig['input'][0]['mappedInputList'][0]['fieldType']
 hPacketFieldType = "double" if hPacketFieldType == "NUMBER" else hPacketFieldType
 
 # Same name of script
