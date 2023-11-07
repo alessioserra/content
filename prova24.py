@@ -37,14 +37,14 @@ jobConfig = json.loads(inputs)
 
 # Retrieve information from updated JSON
 # Get HPacket ID
-hPacketId  = jobConfig["hPacketId"]
+hPacketId  = jobConfig["input"]["packetId"]
 
 # Get first HPacketField ID
-hPacketFieldId = jobConfig['hPacketFieldId']
+hPacketFieldId = jobConfig["input"]['mappedInputList']['packetFieldId']
 
 # Get first HPacketField type
-hPacketFieldType = jobConfig['hPacketFieldType']
-hPacketFieldType = "double" if hPacketFieldType == "number" else hPacketFieldType
+hPacketFieldType = jobConfig["input"]['mappedInputList']['fieldType']
+hPacketFieldType = "double" if hPacketFieldType == "NUMBER" else hPacketFieldType
 
 # Same name of script
 outputName = "mean"
